@@ -8,7 +8,7 @@ This started as a simple foundation for market analysis: pull data, make sure it
 
 ## What is Rust Market Watcher?
 
-Rust Market Watcher is a lightweight data pipeline built around the SCMM API.
+Rust Market Watcher is a lightweight data pipeline built around the SCMM API (https://rust.scmm.app/docs/index.html).
 
 It is meant to solve a basic but important problem first: get clean market data into a structured form before doing anything more advanced with it.
 
