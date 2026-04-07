@@ -3,23 +3,33 @@ from fetch import fetch_item_data
 from validate import validate_item_data
 from metrics import get_latest_price, calculate_average_price, calculate_average_volume, calculate_total_volume, get_price_range
 from output import build_item_report, build_failed_report, print_item_report, save_reports
+import logging
+from log_utils import setup_logging
 
+logger = logging.getLogger(__name__)
 def load_item_names(path):
     with open(path, "r", encoding="utf-8") as f:
-        items = [line.strip() for line in f if line]
+        items = [line.strip() for line in f if line.strip()]
     return items
 
 def main():
-    items = load_item_names(cfg.BASE_DIR / "items.txt")
-    reports = []
+    logger.info("Initiating Rust Market Watcher V1.0.0")
 
-    for item in items:
+    items_path = cfg.BASE_DIR / "items.txt"
+    items = load_item_names(items_path)
+    logger.info("Loaded %d items from %s", len(items), items_path)
+
+    reports = []
+    failed_items  = 0
+
+    for i, item in enumerate(items, start=1):
+        logger.info("[%d/%d] Processing %s...", i, len(items), item)
         try:
             response = fetch_item_data(item)
             validate_item_data(response, item)
 
             latest_price = get_latest_price(response)
-            average_price_7d = (calculate_average_price(response, 7))
+            average_price_7d = calculate_average_price(response, 7)
             average_price_30d = calculate_average_price(response, 30)
             max_price_30d, min_price_30d = get_price_range(response, 30)
             average_volume_7d = calculate_average_volume(response, 7)
@@ -42,11 +52,17 @@ def main():
             reports.append(report)
 
         except ValueError as e:
+            logger.warning("Skipping %s: %s", item, e)
             report = build_failed_report(item, str(e))
+            failed_items += 1
             print_item_report(report)
             reports.append(report)
 
-    save_reports(reports)
+    output_path = save_reports(reports)
+
+    logger.info("Run complete: %d succeeded, %d failed", (len(reports) - failed_items), failed_items)
+    logger.info("Reports file saved to %s", output_path)
 
 if __name__ == "__main__":
+    setup_logging()
     main()

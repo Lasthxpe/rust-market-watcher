@@ -2,8 +2,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+LOGS_DIR = DATA_DIR / "logs"
 
-API_URL_BASE = "https://rust.scmm.app/api/item/"
+API_URL_BASE = "https://rust.scmm.app/api/item"
 
 # === HTTP / API SETTINGS ===
 USER_AGENT = "HopeMarketWatcher/1.0"
