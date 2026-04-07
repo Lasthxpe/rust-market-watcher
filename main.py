@@ -14,7 +14,7 @@ def load_item_names(path):
     return items
 
 def main():
-    logger.info("Initiating Rust Market Watcher v1.2.0")
+    logger.info("Initiating Rust Market Watcher v1.2.1")
 
     items_path = cfg.BASE_DIR / "items.txt"
     items = load_item_names(items_path)
