@@ -12,7 +12,7 @@ def validate_date_format(value: str) -> bool:
         return False
 
 
-def validate_item_data(response, item_name):
+def validate_raw_item_data(response, item_name):
     logger.debug("%s: validating item data", item_name)
 
     if not isinstance(response, list):

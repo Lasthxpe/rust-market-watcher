@@ -1,6 +1,7 @@
 import config as cfg
-from fetch import fetch_item_data
-from validate import validate_item_data
+from fetch import fetch_item_data, save_raw_sales
+from normalize import normalize_sales_data, save_processed_sales
+from validate import validate_raw_item_data
 from metrics import get_latest_price, calculate_average_price, calculate_average_volume, calculate_total_volume, get_price_range
 from output import build_item_report, build_failed_report, print_item_report, save_reports
 import logging
@@ -13,7 +14,7 @@ def load_item_names(path):
     return items
 
 def main():
-    logger.info("Initiating Rust Market Watcher V1.1.0")
+    logger.info("Initiating Rust Market Watcher v1.2.0")
 
     items_path = cfg.BASE_DIR / "items.txt"
     items = load_item_names(items_path)
@@ -25,16 +26,20 @@ def main():
     for i, item in enumerate(items, start=1):
         logger.info("[%d/%d] Processing %s...", i, len(items), item)
         try:
-            response = fetch_item_data(item)
-            validate_item_data(response, item)
+            response = fetch_item_data(item, 31)
+            validate_raw_item_data(response, item)
+            raw_sales_path = save_raw_sales(item, response)
 
-            latest_price = get_latest_price(response)
-            average_price_7d = calculate_average_price(response, 7)
-            average_price_30d = calculate_average_price(response, 30)
-            max_price_30d, min_price_30d = get_price_range(response, 30)
-            average_volume_7d = calculate_average_volume(response, 7)
-            average_volume_30d = calculate_average_volume(response, 30)
-            total_volume_30d = calculate_total_volume(response, 30)
+            normalized = normalize_sales_data(raw_sales_path)
+            processed_sales_path = save_processed_sales(item, normalized)
+
+            latest_price = get_latest_price(normalized)
+            average_price_7d = calculate_average_price(normalized, 7)
+            average_price_30d = calculate_average_price(normalized, 30)
+            max_price_30d, min_price_30d = get_price_range(normalized, 30)
+            average_volume_7d = calculate_average_volume(normalized, 7)
+            average_volume_30d = calculate_average_volume(normalized, 30)
+            total_volume_30d = calculate_total_volume(normalized, 30)
 
             report = build_item_report(
                 item,

@@ -1,4 +1,4 @@
-# Rust Market Watcher v1.1.0
+# Rust Market Watcher v1.2.0
 
 A Python-based data pipeline for fetching, validating, and analyzing Rust skin market data.
 

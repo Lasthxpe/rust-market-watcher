@@ -33,6 +33,14 @@ def build_failed_report(item_name, error):
         "error": error,
     }
 
+def format_metric(value):
+    if value is None:
+        return "N/A"
+    if isinstance(value, float):
+        return f"{value:.2f}"
+    return f"{value}"
+
+
 def print_item_report(report):
     if report["status"] == "failed":
         print(f"[FAILED] {report['item_name']}")
@@ -40,14 +48,14 @@ def print_item_report(report):
         return 
     
     print(f"[OK] {report['item_name']}")
-    print(f"   Latest Price: ${report['latest_price']}")
-    print(f"   Average Price (7): ${round(report['average_price_7d'], 2)}")
-    print(f"   Average Price (30): ${round(report['average_price_30d'], 2)}")
-    print(f"   Highest Price (30): ${report['max_price_30d']}")
-    print(f"   Lowest Price (30): ${report['min_price_30d']}")
-    print(f"   Average Volume (7): {round(report['average_volume_7d'], 2)}")
-    print(f"   Average Volume (30): {round(report['average_volume_30d'], 2)}")
-    print(f"   Total Volume (30): {report['total_volume_30d']}")
+    print(f"   Latest Price: ${format_metric(report['latest_price'])}")
+    print(f"   Average Price (7): ${format_metric(report['average_price_7d'])}")
+    print(f"   Average Price (30): ${format_metric(report['average_price_30d'])}")
+    print(f"   Highest Price (30): ${format_metric(report['max_price_30d'])}")
+    print(f"   Lowest Price (30): ${format_metric(report['min_price_30d'])}")
+    print(f"   Average Volume (7): {format_metric(report['average_volume_7d'])}")
+    print(f"   Average Volume (30): {format_metric(report['average_volume_30d'])}")
+    print(f"   Total Volume (30): {format_metric(report['total_volume_30d'])}")
     
 def save_reports(reports):
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
