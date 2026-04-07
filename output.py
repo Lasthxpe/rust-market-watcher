@@ -56,3 +56,5 @@ def save_reports(reports):
 
     with open(report_path, "w", encoding="UTF-8") as f:
         json.dump(reports, f, indent=2)
+
+    return report_path
