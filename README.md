@@ -1,4 +1,4 @@
-# Rust Market Watcher v1.2.1
+# Rust Market Watcher v1.2.2
 
 A structured data pipeline for collecting, validating, and transforming Rust skin market data into a reliable format for analysis.
 
