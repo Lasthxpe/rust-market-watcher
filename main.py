@@ -1,7 +1,7 @@
 import config as cfg
 from fetch import fetch_item_data, save_raw_sales
 from normalize import normalize_sales_data, save_processed_sales
-from validate import validate_raw_item_data
+from validate import validate_raw_item_data, validate_processed_item_data
 from metrics import get_latest_price, calculate_average_price, calculate_average_volume, calculate_total_volume, get_price_range
 from output import build_item_report, build_failed_report, print_item_report, save_reports
 import logging
@@ -19,6 +19,7 @@ def process_item(item_name: str) -> dict:
     raw_sales_path = save_raw_sales(item_name, response)
 
     normalized = normalize_sales_data(raw_sales_path)
+    validate_processed_item_data(normalized, item_name)
     save_processed_sales(item_name, normalized)
 
     latest_price = get_latest_price(normalized)
@@ -42,7 +43,7 @@ def process_item(item_name: str) -> dict:
         )
 
 def main():
-    logger.info("Initiating Rust Market Watcher v1.2.2")
+    logger.info("Initiating Rust Market Watcher v1.2.3")
 
     items_path = cfg.BASE_DIR / "items.txt"
     items = load_item_names(items_path)

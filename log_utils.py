@@ -12,9 +12,7 @@ def setup_logging(level=logging.INFO):
     log_file = logs_dir / f"{timestamp}.log"
 
     # format fo logs
-    formatter = logging.Formatter(
-        "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
     # get root logger
     logger = logging.getLogger()

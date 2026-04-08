@@ -1,4 +1,4 @@
-# Rust Market Watcher v1.2.2
+# Rust Market Watcher v1.2.3
 
 A structured data pipeline for collecting, validating, and transforming Rust skin market data into a reliable format for analysis.
 
@@ -12,7 +12,8 @@ Rust Market Watcher is designed as a **data layer for market intelligence**.
 
 Instead of jumping straight into predictions or signals, the project prioritizes:
 - clean data ingestion
-- strict validation
+- multi-layer validation (raw + processed)
+- enforced types, ordering, and data integrity
 - consistent normalization
 - reproducible outputs
 
@@ -29,10 +30,11 @@ The pipeline currently performs the following steps:
 3. Validate raw API response
 4. Store raw data per item under `/data/raw/sales_history/`
 5. Normalize raw data into a consistent internal format
-6. Store processed data under `/data/processed/sales_history/`
-7. Compute price and volume metrics
-8. Output results to console
-9. Save aggregated report to `/data/YYYY-MM-DD.json`
+6. Validate processed (normalized) data
+7. Store processed data under `/data/processed/sales_history/`
+8. Compute price and volume metrics
+9. Output results to console
+10. Save aggregated report to `/data/YYYY-MM-DD.json`
 
 ---
 
@@ -42,7 +44,7 @@ The pipeline currently performs the following steps:
 |------|--------|
 | `main.py` | Runs the full pipeline |
 | `fetch.py` | Handles API data fetching and raw data persistence |
-| `validate.py` | Validates raw API response structure and values |
+| `validate.py` | Validates raw API data and processed (normalized) data |
 | `normalize.py` | Converts raw data into normalized internal format |
 | `metrics.py` | Computes price and volume metrics |
 | `output.py` | Handles reporting and output formatting |
