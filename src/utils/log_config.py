@@ -1,15 +1,15 @@
-import config as cfg
 from datetime import datetime, timezone
 import logging
+
+from config.config import LOGS_DIR
 
 def setup_logging(level=logging.INFO):
 
     # create logs folder
-    logs_dir = cfg.LOGS_DIR
-    logs_dir.mkdir(parents=True, exist_ok=True)
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d-T%H%M%SZ")
-    log_file = logs_dir / f"{timestamp}.log"
+    log_file = LOGS_DIR / f"{timestamp}.log"
 
     # format fo logs
     formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S")

@@ -1,9 +1,10 @@
 from pathlib import Path
 
 # === DIRECTORIES ===
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 LOGS_DIR = DATA_DIR / "logs"
+CONFIG_DIR = BASE_DIR / "config"
 
 # DATA
 RAW_DATA_DIR = DATA_DIR / "raw"

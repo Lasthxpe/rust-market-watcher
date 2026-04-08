@@ -1,7 +1,11 @@
-from datetime import datetime, timezone 
-from config import ITEM_FEATURES_DIR
 import json
-from utils import make_safe_item_name
+from datetime import datetime, timezone 
+import logging
+
+from config.config import ITEM_FEATURES_DIR
+from src.utils.strings import make_safe_item_name
+
+logger = logging.getLogger(__name__)
 
 # LAYER 1
 
@@ -67,6 +71,8 @@ def round_feature(value, decimals):
     return value
 
 def build_item_features(normalized_rows: list, item_name: str):
+    
+    logger.debug("%s: building price features", item_name)
 
     row_count = get_row_count(normalized_rows)
     first_date = get_first_date(normalized_rows)
@@ -85,6 +91,8 @@ def build_item_features(normalized_rows: list, item_name: str):
 
     average_volume_7d = calculate_average_volume(volumes, 7)
     average_volume_30d = calculate_average_volume(volumes, 30)
+
+    logger.debug("%s: built price features successfully", item_name)
 
     return {
         "item_name": item_name,
@@ -107,6 +115,8 @@ def save_price_features(features: dict):
     if not features:
         raise ValueError("Features cannot be empty")
 
+    logger.debug("%s: saving price features", features["item_name"])
+
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     save_dir = ITEM_FEATURES_DIR / timestamp
@@ -119,6 +129,8 @@ def save_price_features(features: dict):
     with open(save_path, 'w', encoding="utf-8") as f:
         json.dump(features, f, indent=2)
 
+    logger.info("%s: saved price features to %s", features["item_name"], save_path)
+
     return save_path
 
 def save_price_features_dataset(features_list: list):
@@ -127,6 +139,8 @@ def save_price_features_dataset(features_list: list):
     if not features_list:
         raise ValueError("Features_list cannot be empty")
     
+    logger.debug("Saving aggregated price features dataset (%d items)", len(features_list))
+
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     save_dir = ITEM_FEATURES_DIR / timestamp
@@ -136,5 +150,7 @@ def save_price_features_dataset(features_list: list):
 
     with open(save_path, 'w', encoding="utf-8") as f:
         json.dump(features_list, f, indent=2)
+
+    logger.info("Saved aggregatedd price features (%d items) to %s", len(features_list), save_path)
 
     return save_path

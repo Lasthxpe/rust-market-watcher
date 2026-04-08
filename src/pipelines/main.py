@@ -1,10 +1,12 @@
-import config as cfg
-from fetch import fetch_item_data, save_raw_sales
-from normalize import normalize_sales_data, save_processed_sales
-from validate import validate_raw_item_data, validate_processed_item_data
 import logging
-from log_utils import setup_logging
-from price_features import build_item_features, save_price_features, save_price_features_dataset
+
+import config.config as cfg
+from src.collectors.fetch_price_history import fetch_price_history, save_raw_sales
+from src.processors.normalize_price_history import normalize_sales_data, save_processed_sales
+from src.validators.validate_raw_price_history import validate_raw_item_data
+from src.validators.validate_processed_price_history import validate_processed_item_data
+from src.utils.log_config import setup_logging
+from src.processors.price_features import build_item_features, save_price_features, save_price_features_dataset
 
 logger = logging.getLogger(__name__)
 def load_item_names(path):
@@ -13,7 +15,7 @@ def load_item_names(path):
     return items
 
 def process_item(item_name: str) -> dict:
-    response = fetch_item_data(item_name, 31)
+    response = fetch_price_history(item_name, 31)
     validate_raw_item_data(response, item_name)
     raw_sales_path = save_raw_sales(item_name, response)
 
@@ -29,7 +31,7 @@ def process_item(item_name: str) -> dict:
 def main():
     logger.info("Initiating Rust Market Watcher v1.3.0")
 
-    items_path = cfg.BASE_DIR / "items.txt"
+    items_path = cfg.CONFIG_DIR / "items.txt"
     items = load_item_names(items_path)
     logger.info("Loaded %d items from %s", len(items), items_path)
 

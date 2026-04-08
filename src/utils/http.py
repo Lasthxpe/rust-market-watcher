@@ -1,7 +1,7 @@
 import requests, json, time
-import config as cfg
 from typing import Any
 
+import config.config as cfg
 
 def request_text(
     url: str,

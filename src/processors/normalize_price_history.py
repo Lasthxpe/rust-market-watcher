@@ -1,6 +1,7 @@
 import json
 import logging
-from config import PROCESSED_SALES_DIR, RAW_SALES_DIR
+
+from config.config import PROCESSED_SALES_DIR
 
 logger = logging.getLogger(__name__)
 

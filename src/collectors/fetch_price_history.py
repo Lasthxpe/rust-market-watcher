@@ -1,11 +1,11 @@
-from config import API_URL_BASE, RAW_SALES_DIR
-from http_utils import request_json
+from config.config import API_URL_BASE, RAW_SALES_DIR
+from src.utils.http import request_json
 import logging
 import json
 
 logger = logging.getLogger(__name__)
 
-def fetch_item_data(item_name, maxDays: int):
+def fetch_price_history(item_name, maxDays: int):
     url = f"{API_URL_BASE}/{item_name}/sales"
 
     logger.debug("%s: fetching sales data with maxDays=%s", item_name, maxDays)
