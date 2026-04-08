@@ -2,10 +2,9 @@ import config as cfg
 from fetch import fetch_item_data, save_raw_sales
 from normalize import normalize_sales_data, save_processed_sales
 from validate import validate_raw_item_data, validate_processed_item_data
-from metrics import get_latest_price, calculate_average_price, calculate_average_volume, calculate_total_volume, get_price_range
-from output import build_item_report, build_failed_report, print_item_report, save_reports
 import logging
 from log_utils import setup_logging
+from price_features import build_item_features, save_price_features, save_price_features_dataset
 
 logger = logging.getLogger(__name__)
 def load_item_names(path):
@@ -22,57 +21,37 @@ def process_item(item_name: str) -> dict:
     validate_processed_item_data(normalized, item_name)
     save_processed_sales(item_name, normalized)
 
-    latest_price = get_latest_price(normalized)
-    average_price_7d = calculate_average_price(normalized, 7)
-    average_price_30d = calculate_average_price(normalized, 30)
-    max_price_30d, min_price_30d = get_price_range(normalized, 30)
-    average_volume_7d = calculate_average_volume(normalized, 7)
-    average_volume_30d = calculate_average_volume(normalized, 30)
-    total_volume_30d = calculate_total_volume(normalized, 30)
+    features = build_item_features(normalized, item_name)
+    save_price_features(features)
 
-    return build_item_report(
-        item_name,
-        latest_price,
-        average_price_7d,
-        average_price_30d,
-        max_price_30d,
-        min_price_30d,
-        average_volume_7d,
-        average_volume_30d,
-        total_volume_30d
-        )
+    return features
 
 def main():
-    logger.info("Initiating Rust Market Watcher v1.2.3")
+    logger.info("Initiating Rust Market Watcher v1.3.0")
 
     items_path = cfg.BASE_DIR / "items.txt"
     items = load_item_names(items_path)
     logger.info("Loaded %d items from %s", len(items), items_path)
 
-    reports = []
+    features_list = []
     failed_items  = 0
 
     for i, item in enumerate(items, start=1):
         logger.info("[%d/%d] Processing %s...", i, len(items), item)
         try:
-            report = process_item(item)
-        except (ValueError, RuntimeError, OSError) as e:
-            logger.warning("Skipping %s: %s", item, e)
-            report = build_failed_report(item, str(e))
+            features = process_item(item)
+            features_list.append(features)
+        except (ValueError, RuntimeError, OSError):
+            logger.exception("Skipping %s due to processing error", item)
             failed_items += 1
 
-        print_item_report(report)
-        reports.append(report)
+    if features_list:
+        save_price_features_dataset(features_list)
+    else:
+        logger.warning("No features dataset saved because all items failed")
 
-    logger.info("Processing complete: %d succeeded, %d failed", (len(reports) - failed_items), failed_items)
-
-    try:
-        output_path = save_reports(reports)
-    except OSError as e:
-        logger.critical("Failed to save final report file: %s", e)
-        return
-
-    logger.info("Reports file saved to %s", output_path)
+    logger.info("Processing complete: %d succeeded, %d failed", len(features_list), failed_items)
+    
 
 if __name__ == "__main__":
     setup_logging()

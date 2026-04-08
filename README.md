@@ -1,6 +1,7 @@
-# Rust Market Watcher v1.2.3
+# Rust Market Watcher v1.3.0
 
-A structured data pipeline for collecting, validating, and transforming Rust skin market data into a reliable format for analysis.
+A structured data pipeline for collecting, validating, and transforming Rust skin market data into a machine-usable feature datasets for analysis.
+The system produces per-item features and aggregated datasets that can be used for analysis, ranking, and future decision-making systems.
 
 This project focuses on building a strong data foundation before introducing higher-level systems such as signal detection, ranking, and automated decision-making.
 
@@ -32,9 +33,9 @@ The pipeline currently performs the following steps:
 5. Normalize raw data into a consistent internal format
 6. Validate processed (normalized) data
 7. Store processed data under `/data/processed/sales_history/`
-8. Compute price and volume metrics
-9. Output results to console
-10. Save aggregated report to `/data/YYYY-MM-DD.json`
+8. Compute deterministic per-item features (price, returns, liquidity)
+9. Save per-item feature files under `/data/processed/features/YYYY-MM-DD/`
+10. Save aggregated feature dataset for the run
 
 ---
 
@@ -46,28 +47,31 @@ The pipeline currently performs the following steps:
 | `fetch.py` | Handles API data fetching and raw data persistence |
 | `validate.py` | Validates raw API data and processed (normalized) data |
 | `normalize.py` | Converts raw data into normalized internal format |
-| `metrics.py` | Computes price and volume metrics |
-| `output.py` | Handles reporting and output formatting |
+| `price_features.py` | Builds deterministic per-item feature sets and handles feature persistence |
 | `log_utils.py` | Centralized logging setup (console + file) |
 | `config.py` | Stores configuration and directory structure |
 | `items.txt` | Input list of tracked items |
-| `data/` | Output directory (raw, processed, reports, logs) |
+| `data/` | Output directory (raw, processed, logs) |
 
 ---
 
-## Output
+## Features & Output
 
 ### Per Item
+- Row count
+- First and last available date
 - Latest price
-- 7-day and 30-day average price
-- 30-day high / low
+- Latest volume
+- Raw all-time high and low
+- 7-day and 30-day returns
 - 7-day and 30-day average volume
-- 30-day total volume
 
 ### Generated Files
+
 - Raw data per item → `/data/raw/sales_history/`
 - Processed data per item → `/data/processed/sales_history/`
-- Daily report → `/data/YYYY-MM-DD.json`
+- Per-item feature files → `/data/processed/features/YYYY-MM-DD/`
+- Aggregated feature dataset → `/data/processed/features/YYYY-MM-DD/features_dataset.json`
 - Logs → `/data/logs/`
 
 ---
@@ -88,7 +92,7 @@ This enables traceability of the full pipeline execution.
 
 - **Data first** — no signals without clean data  
 - **Deterministic pipeline** — same input → same output  
-- **Separation of concerns** — fetch, validate, normalize, compute, output  
+- **Separation of concerns** — fetch, validate, normalize, extract features, save  
 - **Incremental development** — build foundation before complexity  
 
 ---
