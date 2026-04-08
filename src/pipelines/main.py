@@ -29,7 +29,7 @@ def process_item(item_name: str) -> dict:
     return features
 
 def main():
-    logger.info("Initiating Rust Market Watcher v1.3.0")
+    logger.info("Initiating Rust Market Watcher v1.3.1")
 
     items_path = cfg.CONFIG_DIR / "items.txt"
     items = load_item_names(items_path)

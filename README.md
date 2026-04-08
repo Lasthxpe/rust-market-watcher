@@ -46,33 +46,18 @@ The pipeline currently performs the following steps:
 
 ## Project Structure
 
-  -----------------------------------------------------------------------------------------------
-  Path                                                   Purpose
-  ------------------------------------------------------ ----------------------------------------
-  `src/pipelines/main.py`                                Runs the full pipeline
-
-  `src/collectors/fetch_price_history.py`                Handles API data fetching and raw data
-                                                         persistence
-
-  `src/validators/validate_raw_price_history.py`         Validates raw API data
-
-  `src/validators/validate_processed_price_history.py`   Validates processed (normalized) data
-
-  `src/processors/normalize_price_history.py`            Converts raw data into normalized
-                                                         internal format
-
-  `src/processors/price_features.py`                     Builds deterministic per-item feature
-                                                         sets and handles feature persistence
-
-  `src/utils/log_config.py`                              Centralized logging setup (console +
-                                                         file)
-
-  `config/config.py`                                     Stores configuration and directory
-                                                         structure
-
-  `config/items.txt`                                     Input list of tracked items
-
-  `data/`                                                Output directory (raw, processed, logs)
+| Path | Purpose |
+|------|--------|
+| `src/pipelines/main.py` | Runs the full pipeline |
+| `src/collectors/fetch_price_history.py` | Handles API data fetching and raw data persistence |
+| `src/validators/validate_raw_price_history.py` | Validates raw API data |
+| `src/validators/validate_processed_price_history.py` | Validates processed (normalized) data |
+| `src/processors/normalize_price_history.py` | Converts raw data into normalized internal format |
+| `src/processors/price_features.py` | Builds deterministic per-item feature sets and handles feature persistence |
+| `src/utils/log_config.py` | Centralized logging setup (console + file) |
+| `config/config.py` | Stores configuration and directory structure |
+| `config/items.txt` | Input list of tracked items |
+| `data/` | Output directory (raw, processed, logs) |
   -----------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------
