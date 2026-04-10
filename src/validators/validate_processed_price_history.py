@@ -10,7 +10,7 @@ def validate_processed_date_format(value: str) -> bool:
     except ValueError:
         return False
 
-def validate_processed_item_data(normalized_rows, item_name):
+def validate_processed_price_history(normalized_rows, item_name):
     logger.debug("%s: validating processed item data", item_name)
 
     if not isinstance(normalized_rows, list):

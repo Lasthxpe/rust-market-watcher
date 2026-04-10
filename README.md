@@ -1,9 +1,7 @@
-# Rust Market Watcher v1.3.1
+# Rust Market Watcher v1.4.0
 
 A structured data pipeline for collecting, validating, and transforming
 Rust skin market data into machine-usable feature datasets for analysis.
-The system produces per-item features and aggregated datasets that can
-be used for analysis, ranking, and future decision-making systems.
 
 This project focuses on building a strong data foundation before
 introducing higher-level systems such as signal detection, ranking, and
@@ -17,9 +15,14 @@ Rust Market Watcher is designed as a **data layer for market
 intelligence**.
 
 Instead of jumping straight into predictions or signals, the project
-prioritizes: - clean data ingestion - multi-layer validation (raw +
-processed) - enforced types, ordering, and data integrity - consistent
-normalization - reproducible outputs
+prioritizes: 
+- clean data ingestion 
+- multi-layer validation (raw +
+processed) 
+- enforced types, ordering, and data integrity 
+- consistent
+normalization 
+- reproducible outputs
 
 The goal is to ensure that any future system built on top operates on
 **trustworthy and structured data**.
@@ -30,18 +33,20 @@ The goal is to ensure that any future system built on top operates on
 
 The pipeline currently performs the following steps:
 
-1.  Load item names from `config/items.txt`
-2.  Fetch raw sales data from the SCMM API
-3.  Validate raw API response
-4.  Store raw data per item under `/data/raw/sales_history/`
-5.  Normalize raw data into a consistent internal format
-6.  Validate processed (normalized) data
-7.  Store processed data under `/data/processed/sales_history/`
-8.  Compute deterministic per-item features (price, returns, liquidity)
-9.  Save per-item feature files under
-    `/data/processed/features/YYYY-MM-DD/`
-10. Save aggregated feature dataset for the run
-
+1. Load item names from `config/items.txt`
+2. Fetch raw sales data from the SCMM API
+3. Validate raw sales data
+4. Store raw sales data per item under `/data/raw/sales_history/`
+5. Normalize raw sales data into a consistent internal format
+6. Validate processed (normalized) data
+7. Store processed sales data under `/data/processed/sales_history/`
+8. Compute deterministic price features (returns, liquidity, etc.)
+9. Fetch raw orderbook data (buyOrders & sellOrders)
+10. Validate raw orderbook data
+11. Store raw orderbook data under `/data/raw/orderbook/`
+12. Compute orderbook features (spread, depth, imbalance, walls)
+13. Save per-item feature files under `/data/processed/features/YYYY-MM-DD/`
+14. Save aggregated datasets for price and orderbook features
 ------------------------------------------------------------------------
 
 ## Project Structure
@@ -50,11 +55,17 @@ The pipeline currently performs the following steps:
 |------|--------|
 | `src/pipelines/main.py` | Runs the full pipeline |
 | `src/collectors/fetch_price_history.py` | Handles API data fetching and raw data persistence |
-| `src/validators/validate_raw_price_history.py` | Validates raw API data |
-| `src/validators/validate_processed_price_history.py` | Validates processed (normalized) data |
+| `src/collectors/fetch_orderbook.py` | Fetches and saves raw orderbook data |
 | `src/processors/normalize_price_history.py` | Converts raw data into normalized internal format |
 | `src/processors/price_features.py` | Builds deterministic per-item feature sets and handles feature persistence |
+| `src/processors/orderbook_features.py` | Builds orderbook-based features |
+| `src/validators/validate_raw_price_history.py` | Validates raw API data |
+| `src/validators/validate_processed_price_history.py` | Validates processed (normalized) data |
+| `src/validators/validate_raw_orderbook.py` | Validates raw orderbook structure |
+| `src/utils/math.py` | Shared math utilities (rounding, etc.) |
 | `src/utils/log_config.py` | Centralized logging setup (console + file) |
+| `src/utils/http.py` | HTTP client with retries, backoff, and JSON parsing |
+| `src/utils/strings.py` | String helpers (safe filenames, etc.) |
 | `config/config.py` | Stores configuration and directory structure |
 | `config/items.txt` | Input list of tracked items |
 | `data/` | Output directory (raw, processed, logs) |
@@ -64,9 +75,8 @@ The pipeline currently performs the following steps:
 
 ## Features & Output
 
-### Per Item
+### Price Features
 
--   Row count
 -   First and last available date
 -   Latest price
 -   Latest volume
@@ -74,14 +84,25 @@ The pipeline currently performs the following steps:
 -   7-day and 30-day returns
 -   7-day and 30-day average volume
 
+### Orderbook Features
+
+- Best bid / best ask price and quantity
+- Spread (absolute and percentage)
+- Top-N depth (bid and ask)
+- Depth imbalance
+- Gap to second ask level
+- Largest bid/ask wall within top N levels
+
 ### Generated Files
 
 -   Raw data per item → `/data/raw/sales_history/`
 -   Processed data per item → `/data/processed/sales_history/`
 -   Per-item feature files → `/data/processed/features/YYYY-MM-DD/`
--   Aggregated feature dataset →
-    `/data/processed/features/YYYY-MM-DD/features_dataset.json`
+-   Aggregated feature dataset → `/data/processed/features/YYYY-MM-DD/features_dataset.json`
+-   Raw orderbook data → `/data/raw/orderbook/`
+-   Orderbook feature dataset → `/data/processed/features/YYYY-MM-DD/orderbook_features_dataset.json`
 -   Logs → `/data/logs/`
+
 
 ------------------------------------------------------------------------
 
