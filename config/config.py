@@ -1,5 +1,7 @@
 from pathlib import Path
 
+PROJECT_VERSION = "v1.4.1"
+
 # === DIRECTORIES ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -7,12 +9,14 @@ LOGS_DIR = DATA_DIR / "logs"
 CONFIG_DIR = BASE_DIR / "config"
 
 # DATA
+UNIVERSE_PATH = CONFIG_DIR / "items.txt"
 RAW_DATA_DIR = DATA_DIR / "raw"
 RAW_SALES_DIR = RAW_DATA_DIR / "sales_history"
 RAW_ORDERBOOK_DIR = RAW_DATA_DIR / "orderbook"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 PROCESSED_SALES_DIR = PROCESSED_DATA_DIR / "sales_history"
 ITEM_FEATURES_DIR = PROCESSED_DATA_DIR / "features"
+REPORTS_DIR = DATA_DIR / "reports"
 
 # === HTTP / API SETTINGS ===
 USER_AGENT = "HopeMarketWatcher/1.3"

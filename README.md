@@ -1,4 +1,4 @@
-# Rust Market Watcher v1.4.0
+# Rust Market Watcher v1.4.1
 
 A structured data pipeline for collecting, validating, and transforming
 Rust skin market data into machine-usable feature datasets for analysis.
@@ -17,11 +17,10 @@ intelligence**.
 Instead of jumping straight into predictions or signals, the project
 prioritizes: 
 - clean data ingestion 
-- multi-layer validation (raw +
-processed) 
+- multi-layer validation (raw + processed) 
 - enforced types, ordering, and data integrity 
-- consistent
-normalization 
+- consistent normalization 
+- safe item-name handling for file saves
 - reproducible outputs
 
 The goal is to ensure that any future system built on top operates on
@@ -45,8 +44,8 @@ The pipeline currently performs the following steps:
 10. Validate raw orderbook data
 11. Store raw orderbook data under `/data/raw/orderbook/`
 12. Compute orderbook features (spread, depth, imbalance, walls)
-13. Save per-item feature files under `/data/processed/features/YYYY-MM-DD/`
-14. Save aggregated datasets for price and orderbook features
+13. Save aggregated datasets for price and orderbook features
+14. Generate run metadata report
 ------------------------------------------------------------------------
 
 ## Project Structure
@@ -66,6 +65,7 @@ The pipeline currently performs the following steps:
 | `src/utils/log_config.py` | Centralized logging setup (console + file) |
 | `src/utils/http.py` | HTTP client with retries, backoff, and JSON parsing |
 | `src/utils/strings.py` | String helpers (safe filenames, etc.) |
+| `src/reports/run_metadata.py` | Generates run-level metadata (timing, inputs, summary) |
 | `config/config.py` | Stores configuration and directory structure |
 | `config/items.txt` | Input list of tracked items |
 | `data/` | Output directory (raw, processed, logs) |
@@ -96,11 +96,11 @@ The pipeline currently performs the following steps:
 ### Generated Files
 
 -   Raw data per item → `/data/raw/sales_history/`
--   Processed data per item → `/data/processed/sales_history/`
--   Per-item feature files → `/data/processed/features/YYYY-MM-DD/`
--   Aggregated feature dataset → `/data/processed/features/YYYY-MM-DD/features_dataset.json`
 -   Raw orderbook data → `/data/raw/orderbook/`
+-   Processed data per item → `/data/processed/sales_history/`
+-   Price feature dataset → `/data/processed/features/YYYY-MM-DD/price_features_dataset.json`
 -   Orderbook feature dataset → `/data/processed/features/YYYY-MM-DD/orderbook_features_dataset.json`
+-   Run metadata report → `/data/reports/YYYY-MM-DD/run_metadata.json`
 -   Logs → `/data/logs/`
 
 

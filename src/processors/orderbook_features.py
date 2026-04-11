@@ -132,7 +132,7 @@ def save_orderbook_features_dataset(features_list):
     save_dir = cfg.ITEM_FEATURES_DIR / timestamp
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    save_path = save_dir / f"orderbook_features_dataset.json"
+    save_path = save_dir / "orderbook_features_dataset.json"
 
     with open(save_path, 'w', encoding="utf-8") as f:
         json.dump(features_list, f, indent=2)

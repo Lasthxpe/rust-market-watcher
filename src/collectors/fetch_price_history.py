@@ -1,13 +1,16 @@
 import logging
 import json
+import urllib.parse
 
 import config.config as cfg
 from src.utils.http import request_json
+from src.utils.strings import make_safe_item_name
 
 logger = logging.getLogger(__name__)
 
 def fetch_price_history(item_name, maxDays: int):
-    url = f"{cfg.API_URL_BASE}/{item_name}/sales"
+    encoded_name = urllib.parse.quote(item_name, safe="")
+    url = f"{cfg.API_URL_BASE}/{encoded_name}/sales/market"
 
     logger.debug("%s: fetching sales data with maxDays=%s", item_name, maxDays)
     data = request_json(
