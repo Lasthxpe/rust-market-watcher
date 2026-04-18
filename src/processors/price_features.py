@@ -35,6 +35,9 @@ def get_latest_price(normalized_rows):
 def get_latest_volume(normalized_rows):
     return normalized_rows[-1]["volume"]
 
+def get_latest_complete_volume(normalized_rows):
+    return normalized_rows[-2]["volume"]
+
 def get_raw_ath(normalized_prices):
     return max(normalized_prices)
 
@@ -70,6 +73,7 @@ def build_item_features(normalized_rows: list, item_name: str):
     last_date = get_last_date(normalized_rows)
     latest_price = get_latest_price(normalized_rows)
     latest_volume = get_latest_volume(normalized_rows)
+    latest_complete_volume = get_latest_complete_volume(normalized_rows)
 
     prices = extract_median_prices(normalized_rows)
     volumes = extract_volumes(normalized_rows)
@@ -91,6 +95,7 @@ def build_item_features(normalized_rows: list, item_name: str):
         "last_date": last_date,
         "latest_price": round_feature(latest_price, 2),
         "latest_volume": latest_volume,
+        "latest_complete_volume": latest_complete_volume,
         "raw_ath": round_feature(raw_ath, 2),
         "raw_atl": round_feature(raw_atl, 2),
         "return_7d_pct": round_feature(return_7d, 2),

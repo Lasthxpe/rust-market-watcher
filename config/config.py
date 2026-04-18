@@ -1,6 +1,6 @@
 from pathlib import Path
 
-PROJECT_VERSION = "v1.4.1"
+PROJECT_VERSION = "v1.5.0"
 
 # === DIRECTORIES ===
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,9 +17,12 @@ PROCESSED_DATA_DIR = DATA_DIR / "processed"
 PROCESSED_SALES_DIR = PROCESSED_DATA_DIR / "sales_history"
 ITEM_FEATURES_DIR = PROCESSED_DATA_DIR / "features"
 REPORTS_DIR = DATA_DIR / "reports"
+SCORING_INPUTS_DIR = DATA_DIR / "scoring_inputs"
+SCORING_OUTPUTS_DIR = DATA_DIR / "scoring_outputs"
+LIQUIDITY_SCORES = SCORING_OUTPUTS_DIR / "liquidity"
 
 # === HTTP / API SETTINGS ===
-USER_AGENT = "HopeMarketWatcher/1.3"
+USER_AGENT = "HopeMarketWatcher/1.5.0"
 API_URL_BASE = "https://rust.scmm.app/api/item"
 REQUEST_TIMEOUT = 15 # Max time to wait for single request - after, abort (secs)
 MAX_RETRIES = 3

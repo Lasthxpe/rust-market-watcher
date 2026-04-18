@@ -11,8 +11,9 @@ from src.validators.validate_raw_orderbook import validate_raw_orderbook_data
 from src.utils.log_config import setup_logging
 from src.processors.price_features import build_item_features, save_price_features_dataset
 from src.processors.orderbook_features import build_orderbook_features, save_orderbook_features_dataset
+from src.processors.ranking_inputs import build_scoring_input_rows, save_scoring_input_rows
 from src.reports.run_metadata import init_run_metadata, save_run_metadata
-
+from src.signals.liquidity import score_liquidity, save_liquidity_scores_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,13 @@ def build_features(item_name: str, sales_normalized, buy_orderbook_response, sel
 
     return price_features, orderbook_features
 
+def build_and_save_scoring_input_rows(price_features_list, orderbook_features_list):
+
+    scoring_input_rows = build_scoring_input_rows(price_features_list, orderbook_features_list)
+
+    save_path = save_scoring_input_rows(scoring_input_rows)
+
+    return scoring_input_rows, save_path
 
 def main():
     logger.info("Initiating Rust Market Watcher %s", cfg.PROJECT_VERSION)
@@ -89,6 +97,7 @@ def main():
 
             price_features_list.append(price_features)
             orderbook_features_list.append(orderbook_features)
+
             successful_items += 1
         except (ValueError, TypeError, RuntimeError, OSError):
             logger.exception("Skipping %s due to processing error", item)
@@ -106,6 +115,11 @@ def main():
         save_orderbook_features_dataset(orderbook_features_list)
     else:
         logger.warning("No orderbook features dataset saved because all items failed")
+
+    scoring_inputs, _ = build_and_save_scoring_input_rows(price_features_list, orderbook_features_list)
+    
+    scored_liquidity = score_liquidity(scoring_inputs)
+    save_liquidity_scores_dataset(scored_liquidity)
 
     metadata_end_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     run_metadata["end_time"] = metadata_end_time
