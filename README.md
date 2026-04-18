@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Rust Market Watcher v1.5.0
+=======
+# Rust Market Watcher v1.5.1
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 A structured data pipeline for collecting, validating, and transforming
 Rust skin market data into machine-usable feature datasets, scoring inputs,
@@ -48,8 +52,13 @@ The pipeline currently performs the following steps:
 13. Save aggregated datasets for price and orderbook features
 14. Build merged scoring input rows from price and orderbook features
 15. Save scoring input dataset
+<<<<<<< HEAD
 16. Compute deterministic liquidity scores
 17. Save liquidity score dataset
+=======
+16. Compute deterministic turnover-based liquidity scores
+17. Save turnover score dataset
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 18. Generate run metadata report
 ------------------------------------------------------------------------
 
@@ -67,7 +76,11 @@ The pipeline currently performs the following steps:
 | `src/validators/validate_raw_price_history.py` | Validates raw API data |
 | `src/validators/validate_processed_price_history.py` | Validates processed (normalized) data |
 | `src/validators/validate_raw_orderbook.py` | Validates raw orderbook structure |
+<<<<<<< HEAD
 | `src/signals/liquidity.py` | Computes deterministic liquidity scores and handles score persistence |
+=======
+| `src/signals/turnover.py` | Computes deterministic turnover-based scores and handles score persistence |
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 | `src/utils/math.py` | Shared math utilities (rounding, etc.) |
 | `src/utils/log_config.py` | Centralized logging setup (console + file) |
 | `src/utils/http.py` | HTTP client with retries, backoff, and JSON parsing |
@@ -94,18 +107,32 @@ The pipeline currently performs the following steps:
 
 ### Orderbook Features
 
+<<<<<<< HEAD
 -   Best bid / best ask price and quantity
 -   Spread (absolute and percentage)
 -   Top-N depth (bid and ask)
 -   Depth imbalance
 -   Gap to second ask level
 -   Largest bid/ask wall within top N levels
+=======
+-   Best bid / best ask price and size
+-   Spread (absolute and percentage)
+-   Top-N depth (bid and ask, top-5 and top-10)
+-   Depth imbalance (top-5 and top-10)
+-   Gap to second level (bid and ask)
+-   Largest bid/ask wall within top N levels
+-   Wall share relative to total visible depth
+-   Best-level concentration (share of depth at touch)
+-   Best-level imbalance (normalized bid vs ask pressure)
+-   Distance from best level to largest wall (structure proximity)
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 ### Scoring Inputs
 
 -   Merged per-item dataset combining price and orderbook features
 -   Flat structure designed for downstream scoring and ranking
 
+<<<<<<< HEAD
 ### Liquidity Signal
 
 -   Liquidity gate based on 30-day average volume
@@ -113,6 +140,14 @@ The pipeline currently performs the following steps:
 -   Trend evaluation using 7-day vs 30-day volume ratio
 -   Final bounded liquidity score (0–20)
 -   Output includes label, flags, reasons, and trace fields
+=======
+### Turnover Signal
+
+-   Turnover gate based on 30-day average volume
+-   Strength classification based on 30-day volume tiers
+-   Trend evaluation using 7-day vs 30-day volume ratio
+-   Final bounded turnover score (0–20)
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 ### Generated Files
 
@@ -122,7 +157,11 @@ The pipeline currently performs the following steps:
 -   Price feature dataset → `/data/processed/features/YYYY-MM-DD/price_features_dataset.json`
 -   Orderbook feature dataset → `/data/processed/features/YYYY-MM-DD/orderbook_features_dataset.json`
 -   Scoring input dataset → `/data/processed/scoring_inputs/YYYY-MM-DD.json`
+<<<<<<< HEAD
 -   Liquidity score dataset → `/data/processed/liquidity_scores/YYYY-MM-DD.json`
+=======
+-   Turnover score dataset → `/data/processed/turnover_scores/YYYY-MM-DD.json`
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 -   Run metadata report → `/data/reports/YYYY-MM-DD/run_metadata.json`
 -   Logs → `/data/logs/`
 
@@ -163,7 +202,11 @@ This enables traceability of the full pipeline execution.
 
 ## Direction
 
+<<<<<<< HEAD
 The project is now transitioning from a pure data pipeline into a full market intelligence system, starting with deterministic scoring signals.
+=======
+The project is now transitioning from a pure data pipeline into a full market intelligence system, starting with deterministic scoring signals, beginning with turnover-based liquidity and expanding into orderbook microstructure signals.
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 Planned layers on top of the current pipeline:
 

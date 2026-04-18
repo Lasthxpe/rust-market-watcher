@@ -1,6 +1,10 @@
 from pathlib import Path
 
+<<<<<<< HEAD
 PROJECT_VERSION = "v1.5.0"
+=======
+PROJECT_VERSION = "v1.5.1"
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 # === DIRECTORIES ===
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +23,11 @@ ITEM_FEATURES_DIR = PROCESSED_DATA_DIR / "features"
 REPORTS_DIR = DATA_DIR / "reports"
 SCORING_INPUTS_DIR = DATA_DIR / "scoring_inputs"
 SCORING_OUTPUTS_DIR = DATA_DIR / "scoring_outputs"
+<<<<<<< HEAD
 LIQUIDITY_SCORES = SCORING_OUTPUTS_DIR / "liquidity"
+=======
+TURNOVER_SCORES = SCORING_OUTPUTS_DIR / "turnover"
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 # === HTTP / API SETTINGS ===
 USER_AGENT = "HopeMarketWatcher/1.5.0"

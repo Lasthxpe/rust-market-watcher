@@ -13,7 +13,11 @@ from src.processors.price_features import build_item_features, save_price_featur
 from src.processors.orderbook_features import build_orderbook_features, save_orderbook_features_dataset
 from src.processors.ranking_inputs import build_scoring_input_rows, save_scoring_input_rows
 from src.reports.run_metadata import init_run_metadata, save_run_metadata
+<<<<<<< HEAD
 from src.signals.liquidity import score_liquidity, save_liquidity_scores_dataset
+=======
+from src.signals.turnover import score_turnover, save_turnover_scores_dataset
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
 logger = logging.getLogger(__name__)
 
@@ -117,9 +121,15 @@ def main():
         logger.warning("No orderbook features dataset saved because all items failed")
 
     scoring_inputs, _ = build_and_save_scoring_input_rows(price_features_list, orderbook_features_list)
+<<<<<<< HEAD
     
     scored_liquidity = score_liquidity(scoring_inputs)
     save_liquidity_scores_dataset(scored_liquidity)
+=======
+
+    scored_turnover = score_turnover(scoring_inputs)
+    save_turnover_scores_dataset(scored_turnover)
+>>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
 
     metadata_end_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     run_metadata["end_time"] = metadata_end_time
