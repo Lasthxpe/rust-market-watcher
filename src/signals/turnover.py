@@ -8,12 +8,16 @@ def check_turnover_gate(row):
         return {
             "item_name": row["item_name"],
             "passed_gate": False,
-            "score": 0.0,
-            "label": "failed_gate",
+            "turnover_score": 0.0,
+            "turnover_label": "failed_gate",
             "flags": ["failed_turnover_gate"],
-            "reasons": ["30d volume is below the minimum threshold of 25"]
+            "reasons": ["30d volume is below the minimum threshold of 25"],
+            "volume_score": 0,
+            "trend_score": 0,
+            "volume_strength_bucket": "failed_gate",
+            "trend_bucket": "failed_gate",
         }
-    
+
     return None
 
 def assign_turnover_strength_bucket(row):
@@ -114,27 +118,27 @@ def score_turnover(rows):
         result = {
             "item_name": row["item_name"],
             "passed_gate": True,
-            "score": final_score,
-            "label": strength_bucket,
+            "turnover_score": final_score,
+            "turnover_label": strength_bucket,
             "flags": [strength_flag, trend_flag],
             "reasons": [strength_reason, trend_reason],
-            "base_score": base_score,
+            "volume_score": base_score,
             "trend_score": trend_score,
-            "strength_bucket": strength_bucket,
+            "volume_strength_bucket": strength_bucket,
             "trend_bucket":  trend_bucket,
         }
 
         scored_items.append(result)
         
-    scored_items = sorted(scored_items, key=lambda x: x["score"], reverse=True)
+    scored_items = sorted(scored_items, key=lambda x: x["turnover_score"], reverse=True)
 
     return scored_items
 
 def save_turnover_scores_dataset(scored_items):
     timestamp = datetime.today().strftime("%Y-%m-%d")
 
-    cfg.TURNOVER_SCORES.mkdir(parents=True, exist_ok=True)
-    save_path = cfg.TURNOVER_SCORES / f"{timestamp}.json"
+    cfg.TURNOVER_SCORES_DIR.mkdir(parents=True, exist_ok=True)
+    save_path = cfg.TURNOVER_SCORES_DIR / f"{timestamp}.json"
 
     with open(save_path, 'w', encoding="utf-8") as f:
         json.dump(scored_items, f, indent=2)

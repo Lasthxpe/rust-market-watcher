@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import config.config as cfg
 from src.collectors.fetch_price_history import fetch_price_history, save_raw_sales
 from src.collectors.fetch_orderbook import fetch_orderbook, save_raw_orderbook
+from src.collectors.fetch_full_price_history import fetch_full_price_history
 from src.processors.normalize_price_history import normalize_sales_data, save_processed_sales
 from src.validators.validate_raw_price_history import validate_raw_price_history
 from src.validators.validate_processed_price_history import validate_processed_price_history
@@ -13,11 +14,10 @@ from src.processors.price_features import build_item_features, save_price_featur
 from src.processors.orderbook_features import build_orderbook_features, save_orderbook_features_dataset
 from src.processors.ranking_inputs import build_scoring_input_rows, save_scoring_input_rows
 from src.reports.run_metadata import init_run_metadata, save_run_metadata
-<<<<<<< HEAD
-from src.signals.liquidity import score_liquidity, save_liquidity_scores_dataset
-=======
+from src.signals.orderbook_liquidity import evaluate_orderbook_liquidity, save_orderbook_liquidity_scores_dataset
 from src.signals.turnover import score_turnover, save_turnover_scores_dataset
->>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
+from src.signals.position import evaluate_position_context, save_position_context_dataset
+from src.pipelines.investment_candidates import build_investment_candidates, save_investment_candidates_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +91,7 @@ def main():
             raw_sales_path = fetch_and_save_raw_sales(item)
             sales_normalized = normalize_and_save_sales(item, raw_sales_path)
             buy_orderbook_response, sell_orderbook_response = fetch_and_save_orderbooks(item)
+            fetch_full_price_history(item)
 
             price_features, orderbook_features = build_features(
                 item, 
@@ -103,7 +104,7 @@ def main():
             orderbook_features_list.append(orderbook_features)
 
             successful_items += 1
-        except (ValueError, TypeError, RuntimeError, OSError):
+        except Exception:
             logger.exception("Skipping %s due to processing error", item)
             failed_items += 1
 
@@ -121,15 +122,19 @@ def main():
         logger.warning("No orderbook features dataset saved because all items failed")
 
     scoring_inputs, _ = build_and_save_scoring_input_rows(price_features_list, orderbook_features_list)
-<<<<<<< HEAD
-    
-    scored_liquidity = score_liquidity(scoring_inputs)
-    save_liquidity_scores_dataset(scored_liquidity)
-=======
+
 
     scored_turnover = score_turnover(scoring_inputs)
     save_turnover_scores_dataset(scored_turnover)
->>>>>>> 61da089 (refactor liquidity naming and introduce orderbook feature layer (v1.5.1))
+    
+    scored_orderbook_liquidity = evaluate_orderbook_liquidity(scoring_inputs)
+    save_orderbook_liquidity_scores_dataset(scored_orderbook_liquidity)
+
+    position_context = evaluate_position_context(scoring_inputs)
+    save_position_context_dataset(position_context)
+
+    investment_candidates = build_investment_candidates(scored_turnover, scored_orderbook_liquidity, position_context)
+    save_investment_candidates_dataset(investment_candidates)
 
     metadata_end_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     run_metadata["end_time"] = metadata_end_time
